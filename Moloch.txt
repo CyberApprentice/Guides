@@ -1,0 +1,67 @@
+My Moloch experience.
+Date: 10/9/18
+
+What is moloch? Closest open-source netflow like thing I was suggested.
+
+Download: https://github.com/aol/moloch
+
+Installation directions followed: https://raw.githubusercontent.com/aol/moloch/master/release/README.txt
+
+System: xubuntu
+
+format:
+1., 2., 3., ... = sequence of events
+$ <text> = command line operation
+# additional comments
+
+Prerequisites:
+0.  $ apt update
+    $ apt full-upgrade # only do this if you are at the upmost version of your OS. Ex: if you're running Ubuntu 16 while Ubuntu 18 is out, it will upgrade to 18. If you want to avoid this, do "apt upgrade"
+    $ apt-get install default-jdk #installing java for step 3.
+    $ sudo -s       # this is the shortcut I use to not use "sudo *" for every line but don't use this regularly. It's better to make a habit of doing "sudo *" because "sudo -s" gives you an entirely new root shell and doesn't make sense to do this just for two lines of code. 
+
+1. Download from http://molo.ch/index.html#downloads
+2. $ sudo dpkg -i moloch*.deb
+3. $ sudo /data/moloch/bin/Configure
+4. $ sudo systemctl start elasticsearch.service 
+    OR $ sudo service elasticsearch start
+5. $ vi /usr/share/elasticsearch/elasticsearch.yml
+    # uncomment the ip address and port and set it to your ip address and leave the port at 9200
+5.1 vi /data/moloch/etc/config.init
+    # you will need to change the ip address and port to the ones to configured above because it is, by-default, set to localhost (127.0.0.1), which will cause errors moving forward
+6. /data/moloch/db/db.pl http://<ip address>:9200 init
+7. Add admin user
+    $ /data/moloch/bin/moloch_add_user.sh admin "<admin name>" <password> --admin 
+        # make sure to keep the quotes and only replace "<stuff>" <-- I know that's confusing
+8. $ sudo systemctl start molochcapture.service
+    $ sudo systemctl start molochviewer.service   
+
+    # OR #
+
+    $ sudo service molochcapture start && service molochviewer start
+9. # Check for errors
+    $ sudo service molochcapture status
+    $ sudo service molochviewer status
+    $ less /data/moloch/logs/viewer.log         # this had one line
+    $ less /data/moloch/logs/capture.log        # this was filled    
+
+10. # visit the web GUI via URL: http://<ip_adress>:8005
+    # fill in previous credentials and BOOM DONE!
+
+11. OPTION -- add services to start on startup
+    $ sudo systemctl enable molochcapture.service
+    $ sudo systemctl enable molochviewer.service
+    $ sudo systemctl enable elasticsearch.service
+
+    # Adding as a service note! #
+    # I tried using updeate-rc.d but it wasn't working. Plus, molochcapture and molochviewer are not in /etc/init.d and don't have scripts for them so you would have to create your own. Just follow the above.
+
+    # reboot and check for status #
+    $ reboot
+    $ service elasticsearch status
+    $ service moloch* status
+    
+    Problem:
+    - service molochcapture status = "Failed to start Moloch Capture"
+        # have yet to find an automated soltuion. What does fix it is restarting the service.
+
