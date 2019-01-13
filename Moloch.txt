@@ -24,8 +24,11 @@ Prerequisites:
 2. $ sudo dpkg -i moloch*.deb
 3. $ sudo /data/moloch/bin/Configure
 4. $ sudo systemctl start elasticsearch.service 
-    OR $ sudo service elasticsearch start
-5. $ vi /usr/share/elasticsearch/elasticsearch.yml
+    OR 
+   $ sudo service elasticsearch start
+5. $ vi /usr/share/elasticsearch/elasticsearch.yml  # user level
+     OR 
+   $ vi /etc/elasticsearch/elasticsearch.yml        # root level
     # uncomment the ip address and port and set it to your ip address and leave the port at 9200
 5.1 vi /data/moloch/etc/config.init
     # you will need to change the ip address and port to the ones to configured above because it is, by-default, set to localhost (127.0.0.1), which will cause errors moving forward
