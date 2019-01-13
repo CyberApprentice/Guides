@@ -23,16 +23,20 @@ Prerequisites:
 1. Download from http://molo.ch/index.html#downloads
 2. $ sudo dpkg -i moloch*.deb
 3. $ sudo /data/moloch/bin/Configure
-4. $ sudo systemctl start elasticsearch.service 
-    OR $ sudo service elasticsearch start
-5. $ vi /usr/share/elasticsearch/elasticsearch.yml
-    # uncomment the ip address and port and set it to your ip address and leave the port at 9200
-5.1 vi /data/moloch/etc/config.init
+4. $ vi /usr/share/elasticsearch/elasticsearch.yml  # user level
+     OR 
+5. $ vi /etc/elasticsearch/elasticsearch.yml # root level
+    # uncomment the ip address ("network.host: <ip>")and port and set it to your ip address and leave the port at 9200
+5.1 $ sudo systemctl start elasticsearch.service 
+    OR 
+   $ sudo service elasticsearch start
+5.2 $ vi /data/moloch/etc/config.ini
     # you will need to change the ip address and port to the ones to configured above because it is, by-default, set to localhost (127.0.0.1), which will cause errors moving forward
-6. /data/moloch/db/db.pl http://<ip address>:9200 init
+    
+6. $ /data/moloch/db/db.pl http://<ip address>:9200 init
 7. Add admin user
-    $ /data/moloch/bin/moloch_add_user.sh admin "<admin name>" <password> --admin 
-        # make sure to keep the quotes and only replace "<stuff>" <-- I know that's confusing
+    $ /data/moloch/bin/moloch_add_user.sh admin  <password> --admin 
+        # make sure to keep the quotes and only replace <stuff> 
 8. $ sudo systemctl start molochcapture.service
     $ sudo systemctl start molochviewer.service   
 
@@ -42,7 +46,7 @@ Prerequisites:
 9. # Check for errors
     $ sudo service molochcapture status
     $ sudo service molochviewer status
-    $ less /data/moloch/logs/viewer.log         # this had one line
+    $ less /data/moloch/logs/viewer.log         # this had one line for me
     $ less /data/moloch/logs/capture.log        # this was filled    
 
 10. # visit the web GUI via URL: http://<ip_adress>:8005
@@ -65,3 +69,23 @@ Prerequisites:
     - service molochcapture status = "Failed to start Moloch Capture"
         # have yet to find an automated soltuion. What does fix it is restarting the service.
 
+# Another optional addition #
+If this is on a sole system sitting between two devices, follow the guide the link to setup the server as a router
+https://opensourceforu.com/2015/04/how-to-configure-ubuntu-as-a-router/
+
+To enable IP forwarding:
+1) $ sudo sh -c echo 1 /proc/sys/net/ipv4/ip forward
+2)  Edit /etc/sysctl.conf
+   # Uncomment "net.ipv4.ip forward=1"
+3) setup iptables (from https://superuser.com/questions/767406/how-to-forward-traffic-using-iptables-rules)
+
+EXT=ens33
+INT=ens38
+echo 1 > /proc/sys/net/ipv4/ip_forward #Tell the system it is OK to forward IP packets
+iptables -t nat -A POSTROUTING -o $EXT -j MASQUERADE
+iptables -A FORWARD -i $EXT -o $INT -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i $INT -o $EXT -j ACCEPT
+ip addr show $INT
+
+4) Save iptables
+    $ iptables-save > /etc/iptables.rules
