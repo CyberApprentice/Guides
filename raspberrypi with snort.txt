@@ -1,0 +1,41 @@
+Installing snort on my raspberry pi 3 B+. I wanted to use Moloch but it only runs 64-bit amd processors and mine is a 32-bit armhfv7 unfortunately. So, i'm going to get back to my roots and setup snort with ELK stack as a sniffer for my personal home setup to get some network analysis training and have a use for my pi3.
+
+Source(s): 
+- https://s3.amazonaws.com/snort-org-site/production/document_files/files/000/000/122/original/Snort_2.9.9.x_on_Ubuntu_14-16.pdf
+- https://github.com/adityashrm21/RaspberryPi-Packet-Sniffer/blob/master/README.md
+
+1) Set up raspberry pi as a MITM device
+    # sudo apt-get install dnsmasq 
+    # sudo nano /etc/dhcpcd.conf
+        - interface eth1
+            static ip_address=172.24.1.1/24
+    # sudo service dhcpcd restart
+    # sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig  
+    # sudo nano /etc/dnsmasq.conf
+        - interface=eth1      # Use interface wlan0  
+            bind-interfaces      # Bind to the interface to make sure we aren't sending things elsewhere  
+            server=8.8.8.8       # Forward DNS requests to Google DNS  
+            domain-needed        # Don't forward short names  
+            bogus-priv           # Never forward addresses in the non-routed address spaces.  
+            dhcp-range=172.24.1.50,172.24.1.150,12h # Assign IP addresses between 172.24.1.50 and 172.24.1.150 with a 12 hour lease time
+    # sudo nano /etc/sysctl.conf
+        - net.ipv4.ip_forward=1 #uncomment this line
+    # sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+    # sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE  
+        sudo iptables -A FORWARD -i eth0 -o eth1 -m state --state RELATED,ESTABLISHED -j ACCEPT  
+        sudo iptables -A FORWARD -i eth1 -o eth0 -j ACCEPT
+    # sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
+        - OR
+        # iptables-save
+    # sudo nano /lib/dhcpcd/dhcpcd-hooks/70-ipv4-nat
+    # iptables-restore < /etc/iptables.ipv4.nat  
+    # sudo service dnsmasq start
+    # sudo reboot
+
+    ***** if dhcpcd status is erroring, "failed to start dhcpcd on all interfaces"... do this!****
+    It means you have more than 1 client running. You need to delete one.
+    # dpkg -l | grep dhcp
+    # apt-get remove dhcpcd
+        - or sudo systemctl disable dhcpcd.service
+
+    Source: https://superuser.com/questions/924166/dhcp-failure-when-rebooting-rpi-2
