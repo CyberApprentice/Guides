@@ -1,6 +1,0 @@
-Secure Copy (SCP)
-
-Scenario #1: 1/19/19
-- From Server A (win) to Server B (linux). Server B requires ssh key
-
-# scp -i C:\path\to\ssh\key C:\path\to\file\to\transfer <username of Server B>@<IP address of server B>:/path/to/destination/on/ServerB

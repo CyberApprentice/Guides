@@ -2,11 +2,11 @@ https://www.tecmint.com/install-collectd-and-collectd-web-to-monitor-server-reso
 
 Step 1: – Install Collectd Service
 
-# apt-get install collectd
+# apt-get -y install collectd
 
 Step 2: Install Collectd-Web and Dependencies
 
-# apt-get install git librrds-perl libjson-perl libhtml-parser-perl
+# apt-get install -y git librrds-perl libjson-perl libhtml-parser-perl
 
 Step 3: Import Collectd-Web Git Repository and Modify Standalone Python Server
 
@@ -23,4 +23,4 @@ notes:
 compatabile with logstash via /etc/collectd/collectd.conf
 the web GUI does not automatically update
 ~10 minute install time
-light and doesn't take long time to load up
+lightweight and doesn't take a long time to load up
