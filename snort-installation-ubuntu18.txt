@@ -1,0 +1,30 @@
+snort - https://snort-org-site.s3.amazonaws.com/production/document_files/files/000/000/138/original/Snort_3.0.0-a4-245_on_Ubuntu_14_16_18.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIXACIED2SPMSC7GA%2F20190919%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20190919T004544Z&X-Amz-Expires=172800&X-Amz-SignedHeaders=host&X-Amz-Signature=23ea30364da8affc086a665467a939d111b5e3c45897db4d95299f45df81c8c9
+
+1) sudo apt-get update && sudo apt-get dist-upgrade -y
+2) mkdir /home/apprentice/Desktop/snort_src; cd /home/apprentice/Desktop/snort_src
+3) dependencies
+$ sudo apt-get install -y build-essential autotools-dev libdumbnet-dev libluajit-5.1-dev libpcap-dev \libpcre3-dev zlib1g-dev pkg-config libhwloc-dev
+$ sudo apt-get install -y cmake
+$ sudo apt-get install -y liblzma-dev openssl libssl-dev cpputest libsqlite3-dev uuid-dev
+$ sudo apt-get install -y libtool git autoconf
+$ sudo apt-get install -y bison flex
+$ cd ~/Desktop/snort_src/; wget https://downloads.sourceforge.net/project/safeclib/libsafec-10052013.tar.gz; tar -xzvf libsafec-10052013.tar.gz; cd libsafec-10052013; ./configure; make; sudo make install
+$ cd ~/Desktop/snort_src/; wget https://github.com/gperftools/gperftools/releases/download/gperftools-2.7/gperftools-2.7.tar.gz; tar xzvf gperftools-2.7.tar.gz; cd gperftools-2.7; ./configure; make; sudo make install
+$ cd ~/Desktop/snort_src/; wget http://www.colm.net/files/ragel/ragel-6.10.tar.gz; tar -xzvf ragel-6.10.tar.gz; cd ragel-6.10; ./configure; make; sudo make install
+
+$ cd ~/Desktop/snort_src/; wget https://dl.bintray.com/boostorg/release/1.67.0/source/boost_1_67_0.tar.gz; tar -xvzf boost_1_67_0.tar.gz
+$ cd ~/Desktop/snort_src/; wget https://github.com/intel/hyperscan/archive/v4.7.0.tar.gz; tar -xvzf v4.7.0.tar.gz; mkdir /home/apprentice/Desktop/snort_src/hyperscan-4.7.0-build; cd /home/apprentice/Desktop/snort_src/hyperscan-4.7.0-build/; cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DBOOST_ROOT=/home/apprentice/Desktop/snort_src/boost_1_67_0/ ../hyperscan-4.7.0; make; sudo make install
+$ cd ~/Desktop/snort_src/; wget https://github.com/google/flatbuffers/archive/v1.9.0.tar.gz -O flatbuffers-*.tar.gz; tar -xzvf flatbuffers-1.9.0.tar.gz; mkdir flatbuffers-build; cd flatbuffers-build; cmake ../flatbuffers-1.9.0; make; sudo make install
+$ cd ~/Desktop/snort_src/; wget https://www.snort.org/downloads/snortplus/daq-2.2.2.tar.gz; tar -xvzf daq-*.tar.gz; cd daq-2.2.2; ./configure; make; sudo make install
+$ sudo ldconfig
+$ cd ~/Downloads; git clone https://github.com/snort3/libdaq.git; cd libdaq/; ./bootstrap; ./connfigure; make; sudo make install;
+$ sudo apt install libtcmalloc-minimal4
+
+4) install snort
+$ cd ~/Desktop/snort_src; git clone git://github.com/snortadmin/snort3.git; cd snort3; ./configure_cmake.sh --prefix=/usr/local --enable-tcmalloc --enable-large-pcap; cd build; make; sudo make install
+$ /usr/local/bin/snort -V
+
+
+5) test snort
+
+

@@ -8,4 +8,6 @@
 (6) tar -zxvf VMwareTools-version.tar.gz
 (7) cd vmware-tools-distrib
 (8) ./vmware-install.pl
+ - some implementations might need "perl vmware-install.pl" instead
 (9) umount /mnt/cdrom OR Guest > end vmware tools install
+(10) restart
